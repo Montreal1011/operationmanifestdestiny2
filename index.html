@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr A.C.C.E.S.S. Terminal</title>
+    <title>ENCLAVE | Manifest Destiny II</title>
+    <!-- Fallout terminal font -->
     <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
     
-    <!-- EMBEDDED CSS FOR FALLOUT TERMINAL LOOK -->
     <style>
+        /* General Body and Container Styling */
         body {
             background-color: #000;
             display: flex;
@@ -16,7 +17,7 @@
             min-height: 100vh;
             margin: 0;
             font-family: 'VT323', monospace;
-            color: #00ff41; /* Fallout green/blue color for text */
+            color: #00ff41; /* Primary terminal glow color */
             padding: 20px;
             box-sizing: border-box;
         }
@@ -24,22 +25,23 @@
         #terminal {
             background-color: #0d1a0d; /* Dark screen background */
             border: 5px solid #00ff41;
-            box-shadow: 0 0 20px #00ff41, inset 0 0 10px #00ff41;
-            padding: 20px;
-            width: 100%;
-            max-width: 800px;
-            min-height: 400px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.7), inset 0 0 15px rgba(0, 255, 65, 0.5);
+            padding: 30px;
+            width: 95%;
+            max-width: 900px;
+            min-height: 600px;
+            max-height: 95vh;
             overflow: hidden; 
             position: relative;
             box-sizing: border-box;
-            /* Responsive adjustments */
-            max-height: 90vh;
+            border-radius: 8px; /* Slightly rounded corners */
         }
 
         #screen {
             position: relative;
             height: 100%;
-            overflow-y: auto; /* Allows scrolling if content exceeds height */
+            overflow-y: auto; /* Allow scrolling for long content */
+            padding-right: 15px; /* Space for scrollbar */
         }
 
         #output {
@@ -47,12 +49,28 @@
             word-wrap: break-word;
             margin: 0;
             line-height: 1.1;
-            font-size: clamp(1.1em, 2vw, 1.5em); /* Responsive font size */
+            font-size: clamp(1.2em, 2vw, 1.6em); 
         }
 
-        /* Cursor style */
+        /* Scanline effect for added realism */
+        #screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Cursor and Typing Effects */
         #cursor {
             animation: blink-caret 1s step-end infinite;
+            display: inline-block;
         }
 
         @keyframes blink-caret {
@@ -60,16 +78,18 @@
             50% { color: #00ff41; }
         }
 
-        /* Link style for the 'LOGIN' command */
-        a {
+        /* Link/Command Style */
+        .command-link {
             color: inherit;
             text-decoration: none;
             cursor: pointer;
+            transition: background-color 0.1s;
         }
 
-        a:hover {
+        .command-link:hover {
             background-color: #00ff41;
-            color: #0d1a0d; /* Invert colors on hover for a terminal effect */
+            color: #0d1a0d; /* Invert colors on hover */
+            padding: 0 2px;
         }
     </style>
 </head>
@@ -81,49 +101,86 @@
         </div>
     </div>
 
-    <!-- EMBEDDED JAVASCRIPT LOGIC -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             const cursor = document.getElementById('cursor');
 
-            // --- RESTORECORD CONFIGURATION ---
-            // !!! ABSOLUTELY ESSENTIAL: REPLACE THIS PLACEHOLDER WITH YOUR 
-            // !!! ACTUAL RESTORECORD VERIFICATION LINK (e.g., https://verify.restorecord.com/v/XXXXXX)
-            const RESTORECORD_VERIFICATION_LINK = 'https://verify.restorecord.com/v/YOUR_UNIQUE_KEY_HERE';
-            // ---------------------------------
-
+            const accessLink = '<a class="command-link" onclick="displayManifest(event)">ACCESS_MANIFEST</a>';
+            
             const initialText = `
-[Mr A.C.C.E.S.S. V.2.0.1]
-ROBCO INDUSTRIES DISCORD INTEGRATION SUITE
------------------------------------------
-ACCESS LEVEL: PENDING VERIFICATION
-SERVER: {DATA REDACTED}
-USER: GUEST
+[ENCLAVE MILITARY LOGISTICS TERMINAL V3.1]
+PROJECT: MANIFEST DESTINY II
 
-[DIAGNOSTICS]
-PROTOCOL: RESTORECORD ACTIVE
-STATUS: READY FOR OAUTH2 INITIATION
+INITIATING BOOT SEQUENCE...
+- [CPU_CORE]: ONLINE
+- [NOMAD_STATUS]: GREEN
+- [SECURE_LINK]: ESTABLISHED (BASE ECHO)
+- [A.I.D.A.]: STANDBY MODE
 
-INITIATE DISCORD ACCOUNT BINDING PROTOCOL:
-> <a onclick="startVerification()">BIND_ACCOUNT</a>
+WARNING: UNAUTHORIZED ACCESS IS A CAPITAL OFFENSE.
+ALL ACTIONS LOGGED AND TRACED TO THE NEAREST CELLULAR LEVEL.
+------------------------------------------------------------------
 
-[NOTE] INITIATING BINDING PROTOCOL WILL REDIRECT YOU TO A SECURE 
-RESTORECORD AUTHORIZATION PAGE. AUTHORIZE ACCESS TO COMPLETE SERVER 
-VERIFICATION. FAILURE TO AUTHORIZE WILL DENY ACCESS.
+WELCOME, HIGH COMMAND.
+
+SELECT PRIMARY LOG:
+> ${accessLink} [ Operation Objectives ]
+> VIEW_RECORDS [ Personnel and Assets - DENIED ]
+> LOGOUT [ System Shutdown ]
+
 `;
+            // Content revealed when ACCESS_MANIFEST is clicked
+            const manifestText = `
+------------------------------------------------------------------
+< PROJECT MANIFEST DESTINY II >
+MISSION LOG: HIGH PRIORITY DIRECTIVE
 
-            // Function to simulate typing out the text
+OBJECTIVE 1: PURIFICATION
+    STATUS: ONGOING
+    DETAILS: Systematically identify and neutralize pre-war anomalies 
+    and genetically compromised populations. Ensure purity of the 
+    territory designated 'New California.' Target prioritization 
+    for initial phase: NCR and associated resistance elements.
+
+OBJECTIVE 2: ASSET RECLAMATION
+    STATUS: PENDING DEPLOYMENT
+    DETAILS: Secure and refurbish all accessible pre-war military 
+    installations, focusing primarily on the acquisition of orbital 
+    launch capabilities and energy production facilities. Project 
+    Liberty Prime activation is Tier 1 priority.
+
+OBJECTIVE 3: RE-ESTABLISHMENT
+    STATUS: PENDING DEPLOYMENT
+    DETAILS: Formal re-institution of the legally-mandated 
+    United States government (The Enclave) within the target region. 
+    Immediate establishment of a perimeter around key strategic 
+    locations (e.g., HELIOS One, Hoover Dam).
+
+OBJECTIVE 4: EXPANSION
+    STATUS: LONG-TERM
+    DETAILS: Once full control of the core region is achieved, 
+    begin expansion protocols eastward to fully reclaim the 
+    contiguous United States under Enclave jurisdiction.
+
+COMMENCEMENT DATE: CLASSIFIED
+COMMANDER: COLONEL TRENT
+STATUS: INITIATE PHASE ONE. THERE IS NO DEFEAT.
+
+> LOGOUT
+`;
+            
             let charIndex = 0;
             function typeEffect() {
                 if (charIndex < initialText.length) {
-                    // Check for and insert the HTML link tag directly
+                    // Check for and insert the HTML link tag (command-link)
                     if (initialText.substring(charIndex).startsWith('<a')) {
                         const endTagIndex = initialText.indexOf('</a>', charIndex) + 4;
                         const linkHTML = initialText.substring(charIndex, endTagIndex);
                         output.innerHTML += linkHTML;
                         charIndex = endTagIndex;
                     } else {
+                        // Regular typing
                         output.innerHTML += initialText.charAt(charIndex) === '\n' ? '\n' : initialText.charAt(charIndex);
                         charIndex++;
                     }
@@ -135,26 +192,37 @@ VERIFICATION. FAILURE TO AUTHORIZE WILL DENY ACCESS.
                 }
             }
 
-            // Function to start the RestoreCord verification flow
-            window.startVerification = function() {
-                // Prevent duplicate clicks
-                if (window.verificationStarted) return;
-                window.verificationStarted = true;
-
-                // Display the command and status message
-                output.innerHTML += '\n> BIND_ACCOUNT\n\n[STATUS: AUTHORIZING VIA RESTORECORD PROTOCOL...]';
+            // Function to reveal the Manifest content
+            window.displayManifest = function(event) {
+                event.preventDefault();
                 
-                // Keep cursor blinking while waiting for redirect
+                // Clear and print the command
+                output.innerHTML += '\n> ACCESS_MANIFEST\n';
+
+                // Temporarily disable link and enable cursor
+                event.target.onclick = null; 
                 cursor.style.animation = 'blink-caret 1s step-end infinite';
                 cursor.style.visibility = 'visible';
                 
-                // Redirect to the RestoreCord link
-                setTimeout(() => {
-                    window.location.href = RESTORECORD_VERIFICATION_LINK; 
-                }, 1500); // Wait 1.5 seconds for the "STATUS" message to display
+                // Start typing the main document after a short pause
+                let manifestCharIndex = 0;
+                function typeManifest() {
+                    if (manifestCharIndex < manifestText.length) {
+                        output.innerHTML += manifestText.charAt(manifestCharIndex);
+                        manifestCharIndex++;
+                        // Scroll to the bottom as text is added
+                        output.parentElement.scrollTop = output.parentElement.scrollHeight;
+                        setTimeout(typeManifest, 10); // Faster typing for document text
+                    } else {
+                        // End typing
+                        cursor.style.animation = 'none';
+                        cursor.style.visibility = 'hidden';
+                        output.innerHTML += '\n> _';
+                    }
+                }
+                setTimeout(typeManifest, 1000); 
             }
 
-            // Start the typing animation on load
             typeEffect();
         });
     </script>
