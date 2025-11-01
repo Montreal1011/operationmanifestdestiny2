@@ -106,8 +106,11 @@
             const output = document.getElementById('output');
             const cursor = document.getElementById('cursor');
 
-            const accessLink = '<a class="command-link" onclick="displayManifest(event)">ACCESS_MANIFEST</a>';
+            const DISCORD_INVITE_URL = 'https://discord.gg/SxtapqfYSE';
             
+            const accessLink = '<a class="command-link" onclick="displayManifest(event)">ACCESS_MANIFEST</a>';
+            const discordLink = `<a class="command-link" onclick="joinCommunity(event)">JOIN_COMMUNITY</a>`;
+
             const initialText = `
 [ENCLAVE MILITARY LOGISTICS TERMINAL V3.1]
 PROJECT: MANIFEST DESTINY II
@@ -126,6 +129,7 @@ WELCOME, HIGH COMMAND.
 
 SELECT PRIMARY LOG:
 > ${accessLink} [ Operation Objectives ]
+> ${discordLink} [ Enlistment/Recruitment ]
 > VIEW_RECORDS [ Personnel and Assets - DENIED ]
 > LOGOUT [ System Shutdown ]
 
@@ -221,6 +225,28 @@ STATUS: INITIATE PHASE ONE. THERE IS NO DEFEAT.
                     }
                 }
                 setTimeout(typeManifest, 1000); 
+            }
+
+            // Function to join the community
+            window.joinCommunity = function(event) {
+                event.preventDefault();
+
+                // Display the command and status message
+                output.innerHTML += '\n> JOIN_COMMUNITY\n\n[STATUS: CONNECTING TO SECURE RECRUITMENT NETWORK...]';
+                
+                // Keep cursor blinking while waiting for redirect
+                cursor.style.animation = 'blink-caret 1s step-end infinite';
+                cursor.style.visibility = 'visible';
+
+                // Redirect to the Discord link in a new tab
+                setTimeout(() => {
+                    window.open(DISCORD_INVITE_URL, '_blank'); 
+                    
+                    // After opening the link, reset terminal state
+                    output.innerHTML += '\n[STATUS: RECRUITMENT LINK DISPATCHED. STANDBY FOR NEW ORDERS.]\n>';
+                    cursor.style.animation = 'none';
+                    cursor.style.visibility = 'hidden';
+                }, 1500);
             }
 
             typeEffect();
