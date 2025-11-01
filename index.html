@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr A.C.C.E.S.S. Terminal</title>
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+    
+    <!-- EMBEDDED CSS FOR FALLOUT TERMINAL LOOK -->
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'VT323', monospace;
+            color: #00ff41; /* Fallout green/blue color for text */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #terminal {
+            background-color: #0d1a0d; /* Dark screen background */
+            border: 5px solid #00ff41;
+            box-shadow: 0 0 20px #00ff41, inset 0 0 10px #00ff41;
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            min-height: 400px;
+            overflow: hidden; 
+            position: relative;
+            box-sizing: border-box;
+            /* Responsive adjustments */
+            max-height: 90vh;
+        }
+
+        #screen {
+            position: relative;
+            height: 100%;
+            overflow-y: auto; /* Allows scrolling if content exceeds height */
+        }
+
+        #output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+            line-height: 1.1;
+            font-size: clamp(1.1em, 2vw, 1.5em); /* Responsive font size */
+        }
+
+        /* Cursor style */
+        #cursor {
+            animation: blink-caret 1s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { color: transparent; }
+            50% { color: #00ff41; }
+        }
+
+        /* Link style for the 'LOGIN' command */
+        a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a:hover {
+            background-color: #00ff41;
+            color: #0d1a0d; /* Invert colors on hover for a terminal effect */
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div id="screen">
+            <pre id="output"></pre>
+            <span id="cursor">_</span>
+        </div>
+    </div>
+
+    <!-- EMBEDDED JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const output = document.getElementById('output');
+            const cursor = document.getElementById('cursor');
+
+            // --- RESTORECORD CONFIGURATION ---
+            // !!! ABSOLUTELY ESSENTIAL: REPLACE THIS PLACEHOLDER WITH YOUR 
+            // !!! ACTUAL RESTORECORD VERIFICATION LINK (e.g., https://verify.restorecord.com/v/XXXXXX)
+            const RESTORECORD_VERIFICATION_LINK = 'https://verify.restorecord.com/v/YOUR_UNIQUE_KEY_HERE';
+            // ---------------------------------
+
+            const initialText = `
+[Mr A.C.C.E.S.S. V.2.0.1]
+ROBCO INDUSTRIES DISCORD INTEGRATION SUITE
+-----------------------------------------
+ACCESS LEVEL: PENDING VERIFICATION
+SERVER: {DATA REDACTED}
+USER: GUEST
+
+[DIAGNOSTICS]
+PROTOCOL: RESTORECORD ACTIVE
+STATUS: READY FOR OAUTH2 INITIATION
+
+INITIATE DISCORD ACCOUNT BINDING PROTOCOL:
+> <a onclick="startVerification()">BIND_ACCOUNT</a>
+
+[NOTE] INITIATING BINDING PROTOCOL WILL REDIRECT YOU TO A SECURE 
+RESTORECORD AUTHORIZATION PAGE. AUTHORIZE ACCESS TO COMPLETE SERVER 
+VERIFICATION. FAILURE TO AUTHORIZE WILL DENY ACCESS.
+`;
+
+            // Function to simulate typing out the text
+            let charIndex = 0;
+            function typeEffect() {
+                if (charIndex < initialText.length) {
+                    // Check for and insert the HTML link tag directly
+                    if (initialText.substring(charIndex).startsWith('<a')) {
+                        const endTagIndex = initialText.indexOf('</a>', charIndex) + 4;
+                        const linkHTML = initialText.substring(charIndex, endTagIndex);
+                        output.innerHTML += linkHTML;
+                        charIndex = endTagIndex;
+                    } else {
+                        output.innerHTML += initialText.charAt(charIndex) === '\n' ? '\n' : initialText.charAt(charIndex);
+                        charIndex++;
+                    }
+                    setTimeout(typeEffect, 20); // Typing speed
+                } else {
+                    // Stop blinking the cursor once typing is done
+                    cursor.style.animation = 'none';
+                    cursor.style.visibility = 'hidden';
+                }
+            }
+
+            // Function to start the RestoreCord verification flow
+            window.startVerification = function() {
+                // Prevent duplicate clicks
+                if (window.verificationStarted) return;
+                window.verificationStarted = true;
+
+                // Display the command and status message
+                output.innerHTML += '\n> BIND_ACCOUNT\n\n[STATUS: AUTHORIZING VIA RESTORECORD PROTOCOL...]';
+                
+                // Keep cursor blinking while waiting for redirect
+                cursor.style.animation = 'blink-caret 1s step-end infinite';
+                cursor.style.visibility = 'visible';
+                
+                // Redirect to the RestoreCord link
+                setTimeout(() => {
+                    window.location.href = RESTORECORD_VERIFICATION_LINK; 
+                }, 1500); // Wait 1.5 seconds for the "STATUS" message to display
+            }
+
+            // Start the typing animation on load
+            typeEffect();
+        });
+    </script>
+</body>
+</html>
